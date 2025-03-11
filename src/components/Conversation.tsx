@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import BlurBackground from './BlurBackground';
+import PhotoFrame from './PhotoFrame';
 
 type Message = {
   id: string;
@@ -36,6 +37,7 @@ const Conversation: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [language, setLanguage] = useState('en');
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
@@ -145,6 +147,10 @@ const Conversation: React.FC = () => {
       }, 1000);
     }
   };
+
+  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setLanguage(e.target.value);
+  };
   
   return (
     <section className="py-16" id="converse">
@@ -165,103 +171,128 @@ const Conversation: React.FC = () => {
           transition={{ duration: 0.5 }}
           className="max-w-2xl mx-auto"
         >
-          <BlurBackground className="p-0 overflow-hidden h-[600px] flex flex-col">
-            <div className="border-b border-memorial-100 p-4 flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="w-10 h-10 rounded-full bg-echo-100 flex items-center justify-center">
-                  <span className="text-echo-600 font-medium">JS</span>
-                </div>
-                <div className="ml-3">
-                  <p className="font-medium text-memorial-800">John Smith</p>
-                  <div className="flex items-center">
-                    <div className="pulse-dot mr-2"></div>
-                    <p className="text-xs text-memorial-500">
-                      {isSpeaking ? "Speaking..." : "Online"}
-                    </p>
+          <div className="flex flex-col md:flex-row gap-6 items-start">
+            {/* Photo Frame */}
+            <PhotoFrame 
+              photoUrl="/placeholder-person.jpg" 
+              isAnimating={isSpeaking} 
+              className="mx-auto md:mx-0"
+            />
+
+            {/* Chat Interface */}
+            <BlurBackground className="p-0 overflow-hidden h-[600px] flex flex-col flex-1">
+              <div className="border-b border-memorial-100 p-4 flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="w-10 h-10 rounded-full bg-echo-100 flex items-center justify-center">
+                    <span className="text-echo-600 font-medium">JS</span>
                   </div>
-                </div>
-              </div>
-              <div className="flex space-x-2">
-                <button className="text-memorial-400 hover:text-memorial-600 transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-            
-            <div className="flex-1 overflow-y-auto p-4">
-              <div className="space-y-4">
-                {messages.map((message) => (
-                  <div key={message.id} className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[80%] ${message.isUser ? 'bg-echo-500 text-white' : 'bg-memorial-100 text-memorial-800'} rounded-xl px-4 py-3 shadow-sm`}>
-                      <p className="text-sm">{message.text}</p>
-                      <p className={`text-xs mt-1 ${message.isUser ? 'text-echo-100' : 'text-memorial-500'}`}>
-                        {formatTime(message.timestamp)}
+                  <div className="ml-3">
+                    <p className="font-medium text-memorial-800">John Smith</p>
+                    <div className="flex items-center">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                      <p className="text-xs text-memorial-500">
+                        {isSpeaking ? "Speaking..." : "Online"}
                       </p>
                     </div>
                   </div>
-                ))}
-                
-                {isThinking && (
-                  <div className="flex justify-start">
-                    <div className="bg-memorial-100 text-memorial-800 rounded-xl px-4 py-3 shadow-sm">
-                      <div className="flex space-x-1">
-                        <span className="w-2 h-2 bg-memorial-300 rounded-full animate-pulse"></span>
-                        <span className="w-2 h-2 bg-memorial-300 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></span>
-                        <span className="w-2 h-2 bg-memorial-300 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></span>
+                </div>
+                <div className="flex space-x-2">
+                  <select 
+                    value={language}
+                    onChange={handleLanguageChange}
+                    className="text-sm border rounded-md py-1 px-2 text-memorial-600 bg-white"
+                  >
+                    <option value="en">English</option>
+                    <option value="es">Español</option>
+                    <option value="fr">Français</option>
+                    <option value="de">Deutsch</option>
+                    <option value="zh">中文</option>
+                    <option value="ja">日本語</option>
+                    <option value="ko">한국어</option>
+                    <option value="ar">العربية</option>
+                    <option value="hi">हिन्दी</option>
+                  </select>
+                  <button className="text-memorial-400 hover:text-memorial-600 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              
+              <div className="flex-1 overflow-y-auto p-4">
+                <div className="space-y-4">
+                  {messages.map((message) => (
+                    <div key={message.id} className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`max-w-[80%] ${message.isUser ? 'bg-echo-500 text-white' : 'bg-memorial-100 text-memorial-800'} rounded-xl px-4 py-3 shadow-sm`}>
+                        <p className="text-sm">{message.text}</p>
+                        <p className={`text-xs mt-1 ${message.isUser ? 'text-echo-100' : 'text-memorial-500'}`}>
+                          {formatTime(message.timestamp)}
+                        </p>
                       </div>
                     </div>
-                  </div>
-                )}
-                
-                {isSpeaking && (
-                  <div className="flex justify-start">
-                    <div className="bg-memorial-100 text-memorial-800 rounded-xl px-4 py-3 shadow-sm">
-                      <AudioWaveAnimation />
+                  ))}
+                  
+                  {isThinking && (
+                    <div className="flex justify-start">
+                      <div className="bg-memorial-100 text-memorial-800 rounded-xl px-4 py-3 shadow-sm">
+                        <div className="flex space-x-1">
+                          <span className="w-2 h-2 bg-memorial-300 rounded-full animate-pulse"></span>
+                          <span className="w-2 h-2 bg-memorial-300 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></span>
+                          <span className="w-2 h-2 bg-memorial-300 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                )}
-                
-                <div ref={messagesEndRef} />
-              </div>
-            </div>
-            
-            <div className="border-t border-memorial-100 p-4">
-              <div className="flex items-center">
-                <button 
-                  onClick={toggleRecording}
-                  className={`flex-shrink-0 mr-3 ${isRecording ? 'text-red-500' : 'text-memorial-400 hover:text-memorial-600'} transition-colors`}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                  </svg>
-                </button>
-                
-                <div className="relative flex-1">
-                  <textarea
-                    className="w-full border border-memorial-200 rounded-lg py-2 px-3 text-memorial-800 placeholder-memorial-400 focus:outline-none focus:ring-2 focus:ring-echo-500 focus:border-transparent resize-none"
-                    placeholder={isRecording ? "Recording... Press microphone to stop" : "Type a message..."}
-                    rows={1}
-                    value={inputText}
-                    onChange={(e) => setInputText(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    disabled={isRecording}
-                  />
+                  )}
+                  
+                  {isSpeaking && (
+                    <div className="flex justify-start">
+                      <div className="bg-memorial-100 text-memorial-800 rounded-xl px-4 py-3 shadow-sm">
+                        <AudioWaveAnimation />
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div ref={messagesEndRef} />
                 </div>
-                
-                <button 
-                  onClick={handleSendMessage}
-                  disabled={!inputText.trim() && !isRecording}
-                  className="flex-shrink-0 ml-3 text-echo-500 hover:text-echo-600 disabled:text-memorial-300 disabled:cursor-not-allowed transition-colors"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                  </svg>
-                </button>
               </div>
-            </div>
-          </BlurBackground>
+              
+              <div className="border-t border-memorial-100 p-4">
+                <div className="flex items-center">
+                  <button 
+                    onClick={toggleRecording}
+                    className={`flex-shrink-0 mr-3 ${isRecording ? 'text-red-500' : 'text-memorial-400 hover:text-memorial-600'} transition-colors`}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                    </svg>
+                  </button>
+                  
+                  <div className="relative flex-1">
+                    <textarea
+                      className="w-full border border-memorial-200 rounded-lg py-2 px-3 text-memorial-800 placeholder-memorial-400 focus:outline-none focus:ring-2 focus:ring-echo-500 focus:border-transparent resize-none"
+                      placeholder={isRecording ? "Recording... Press microphone to stop" : "Type a message..."}
+                      rows={1}
+                      value={inputText}
+                      onChange={(e) => setInputText(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      disabled={isRecording}
+                    />
+                  </div>
+                  
+                  <button 
+                    onClick={handleSendMessage}
+                    disabled={!inputText.trim() && !isRecording}
+                    className="flex-shrink-0 ml-3 text-echo-500 hover:text-echo-600 disabled:text-memorial-300 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </BlurBackground>
+          </div>
           
           <div className="mt-4 text-center">
             <p className="text-sm text-memorial-500">
